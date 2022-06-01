@@ -24,9 +24,9 @@ def get_args():
 
 	usage = """
 	Usage:
-		try.py -s <STORAGE> --diag
-		try.py --version
-		try.py -h | --help
+		zfsdisktray_show.py -s <STORAGE> --diag
+		zfsdisktray_show.py  --version
+		zfsdisktray_show.py -h | --help
 
 	Options:
 		-h --help            Show this message and exit
