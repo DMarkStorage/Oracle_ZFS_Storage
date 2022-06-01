@@ -1,8 +1,8 @@
-# Oracle_ZFS_Storage
+# Zfsdisktray
 
-# Oracle ZFS Storage
+# Zfsdisktray
 
-This program requests data from `ZFS Storage appliance`. this program prints out disk tray information. 
+This program requests data from `ZFS Storage appliance` this program prints out disk tray information. 
 
 ## USAGE
 `zfsdisktray_show` will show you the Chassis informations available on the storage. 
