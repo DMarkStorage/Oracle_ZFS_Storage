@@ -15,9 +15,9 @@ so you should have at least a basic understanding of what those commands do.
 # Install docopt using pip
 
 `pip install docopt`
-
-Check [install docopt](https://pypi.org/project/docopt/) for more information. 
 ```
+Check [install docopt](https://pypi.org/project/docopt/) for more information. 
+
 
 ### Usage Example
 ## Run the program
