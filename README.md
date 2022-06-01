@@ -2,8 +2,7 @@
 
 # Oracle ZFS Storage
 
-This program requests data from `ZFS Storage appliance`. This is basically plumbing around `zfs send` and `zfs receive`
-so you should have at least a basic understanding of what those commands do.
+This program requests data from `ZFS Storage appliance`. 
 
 ## USAGE
 `zfsdisktray_show` will show you the Chassis informations available on the storage. 
