@@ -3,6 +3,8 @@ import json
 import os
 import traceback
 from docopt import docopt
+from prettytable import PrettyTable
+import csv
 requests.packages.urllib3.disable_warnings()
 
 __version__ = '1.0'
@@ -24,8 +26,10 @@ def get_args():
 
 	usage = """
 	Usage:
-		zfsdisktray_show.py -s <STORAGE> --diag
-		zfsdisktray_show.py  --version
+		zfsdisktray_show.py -s <STORAGE> -d 
+		zfsdisktray_show.py -s <STORAGE> -d --csv <FILENAME>
+		zfsdisktray_show.py -s <STORAGE> -d --csv <FILENAME> --json <JSON_FN>
+		zfsdisktray_show.py --version
 		zfsdisktray_show.py -h | --help
 
 	Options:
@@ -56,59 +60,85 @@ def get_data(storage):
 
 	for i in url:
 		ch1_uri = '{}/api'.format(base_url)+i
-		print(ch1_uri)
 		r = requests.get(ch1_uri, verify=False, headers = header)
 		j = r.json()
 		data.update(j)
 
-	# print( data['fault']['code'])
-	# if data['fault']['code'] ==401:
-	# 	print('Unauthorized! Try to check your USERNAME and PASSWORD')
-	# 	exit()
-	# else:
-	# 	get_val()
 
-	# with open('chassis_output.json', 'w') as outfile:
-	# 	json.dump(data, outfile, indent = 2)
+def get_val(args):
 
-def get_val():
-
-	def get_chassis():
-
+	def get_chassis(args):
 		print('\n')
 		print('+'+'-'*30+'+')
 		print('  *** CHASSIS INFORMATION ***\n')
+		table = PrettyTable()
 		for i in data['chassis']:
-			print('* Chassis Name: ',i['name'])
-			print('* Chassis Faulted: ',i['faulted'])
-			print('* Chassis Manufacturer: ',i['manufacturer'])
-			print('* Chassis Model: ',i['model'])
-			if 'part' in data:
-				print('* Chassis Part: ',i['part'])
+			table.field_names = ["Name","Faulted","Manufacturer",
+							"model","Part","Type","RPM","Path",
+							"Serial","HREF"]
+
+			if 'part' in i:
+				part = i['part']
 			else:
-				pass
-			print('* Chassis Type: ',i['type'])
-			if 'rpm' in data:
-				print('* Chassis RPM: ',i['rpm'])
+				part = " "
+
+			if 'rpm' in i:
+				rpm = i['rpm']
 			else:
-				pass
-			if 'path' in data:
-				print('* Chassis Path: ',i['path'])
+				rpm = " "
+			if 'path' in i:
+				path = i['path']
 			else:
-				pass
-			print('* Chassis Serial: ',i['serial'])
-			href = i['href']
+				path = " "
+			if 'href' in i:
+				hr = i['href']
+			else:
+				hr = " "
 
-			print('* Chassis HREF: ',href[-11:],"\n")
+
+			table.add_row([i['name'],i['faulted'],i['manufacturer'],i['model']
+				,part,i['type'],rpm,path,i['serial'][:30]+"\n"+i['serial'][30:],hr])
 
 
+			print(table)
+		if not args['--json']:
+			out_csv(args['<FILENAME>'])
 
-	get_chassis()
+		elif args['--json']:
+			out_csv(args['<FILENAME>'])
+			out_json(args['<JSON_FN>'])
+
+
+	get_chassis(args)
+def out_csv(fl):
+	datafs={}
+	filename = str(fl)+'.csv'
+
+
+	datafs = data['chassis']
+	data_file = open(filename, 'w')
+	csv_ = csv.writer(data_file)
+
+	c = 0
+	for item in data['chassis']:
+		if c == 0:
+			header = item.keys()
+			csv_.writerow(header)
+			c +=1
+
+		csv_.writerow(item.values())
+	data_file.close()
+
+def out_json(fl):
+	filename = str(fl)+'.json'
+	with open(filename, 'w') as outfile:
+		json.dump(data, outfile, indent = 2)
 
 def main(args):
 	storage = args['<STORAGE>']
 	get_data(storage)
-	get_val()
+	get_val(args)
+
 
 
 if __name__ == '__main__':
